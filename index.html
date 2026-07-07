@@ -1,0 +1,724 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Quiz de repaso de 30 preguntas aleatorias sobre Introducción a la Programación Científica (BIOINF): bases de datos biológicas, Git/GitHub, lenguajes de programación, sistemas operativos, Linux y Perl/BioPerl.">
+<title>Quiz BIOINF — Programación Científica</title>
+<style>
+  :root{
+    --bg: #eef3ef;
+    --surface: #ffffff;
+    --surface-2: #e4ece6;
+    --border: #cddcd2;
+    --text: #16241d;
+    --text-dim: #4b6157;
+    --accent: #1f8f6b;
+    --accent-soft: rgba(31,143,107,.10);
+    --good: #2f8f52;
+    --good-soft: rgba(47,143,82,.12);
+    --bad: #c33f57;
+    --bad-soft: rgba(195,63,87,.10);
+    --warn: #a5711f;
+    --warn-soft: rgba(165,113,31,.12);
+    --shadow: 0 1px 2px rgba(20,40,30,.06), 0 8px 24px rgba(20,40,30,.06);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg: #0b1310;
+      --surface: #121d18;
+      --surface-2: #1a2a22;
+      --border: #24382e;
+      --text: #e7ede9;
+      --text-dim: #9fb3a6;
+      --accent: #3fc296;
+      --accent-soft: rgba(63,194,150,.12);
+      --good: #57c47f;
+      --good-soft: rgba(87,196,127,.14);
+      --bad: #e97288;
+      --bad-soft: rgba(233,114,136,.12);
+      --warn: #e0ac52;
+      --warn-soft: rgba(224,172,82,.14);
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 12px 32px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg: #0b1310; --surface: #121d18; --surface-2: #1a2a22; --border: #24382e;
+    --text: #e7ede9; --text-dim: #9fb3a6; --accent: #3fc296; --accent-soft: rgba(63,194,150,.12);
+    --good: #57c47f; --good-soft: rgba(87,196,127,.14); --bad: #e97288; --bad-soft: rgba(233,114,136,.12);
+    --warn: #e0ac52; --warn-soft: rgba(224,172,82,.14);
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 12px 32px rgba(0,0,0,.35);
+  }
+  :root[data-theme="light"]{
+    --bg: #eef3ef; --surface: #ffffff; --surface-2: #e4ece6; --border: #cddcd2;
+    --text: #16241d; --text-dim: #4b6157; --accent: #1f8f6b; --accent-soft: rgba(31,143,107,.10);
+    --good: #2f8f52; --good-soft: rgba(47,143,82,.12); --bad: #c33f57; --bad-soft: rgba(195,63,87,.10);
+    --warn: #a5711f; --warn-soft: rgba(165,113,31,.12);
+    --shadow: 0 1px 2px rgba(20,40,30,.06), 0 8px 24px rgba(20,40,30,.06);
+  }
+
+  *{ box-sizing: border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+  }
+  .mono{ font-family: ui-monospace, "SF Mono", "Cascadia Mono", Consolas, "Liberation Mono", monospace; font-variant-numeric: tabular-nums; }
+
+  #helix{
+    position: fixed; inset: 0; width: 100%; height: 100%;
+    z-index: 0; opacity: .5; pointer-events: none;
+  }
+
+  .wrap{
+    position: relative; z-index: 1;
+    max-width: 760px; margin: 0 auto;
+    padding: 48px 20px 80px;
+  }
+
+  header.top{
+    display:flex; flex-direction:column; gap:4px; margin-bottom: 28px;
+  }
+  .eyebrow{
+    font-family: ui-monospace, "SF Mono", Consolas, monospace;
+    font-size: 12px; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--accent);
+  }
+  h1{
+    font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+    font-size: 32px; line-height: 1.15; margin: 2px 0 0;
+    text-wrap: balance;
+    letter-spacing: -.01em;
+  }
+  .sub{ color: var(--text-dim); font-size: 15px; margin-top: 6px; max-width: 62ch; }
+
+  .card{
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+  }
+
+  /* ---------- Start screen ---------- */
+  .start-card{ padding: 32px; margin-top: 22px; }
+  .mode-grid{ display:grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 20px 0 8px; }
+  @media (max-width: 560px){ .mode-grid{ grid-template-columns: 1fr; } }
+  .mode-opt{
+    border: 1px solid var(--border); border-radius: 12px; padding: 18px;
+    cursor: pointer; text-align: left; background: var(--surface-2);
+    transition: border-color .15s ease, background .15s ease, transform .1s ease;
+    display:flex; flex-direction:column; gap:6px;
+  }
+  .mode-opt:hover{ transform: translateY(-1px); }
+  .mode-opt.selected{ border-color: var(--accent); background: var(--accent-soft); }
+  .mode-opt .tag{
+    font-family: ui-monospace, monospace; font-size: 11px; letter-spacing:.08em;
+    text-transform: uppercase; color: var(--accent); font-weight: 600;
+  }
+  .mode-opt .name{ font-size: 16.5px; font-weight: 600; }
+  .mode-opt .desc{ font-size: 13.5px; color: var(--text-dim); line-height:1.45; }
+
+  .stats-line{
+    display:flex; gap: 22px; margin: 22px 0 6px; flex-wrap: wrap;
+    font-size: 13.5px; color: var(--text-dim);
+  }
+  .stats-line b{ color: var(--text); font-family: ui-monospace, monospace; }
+
+  button{ font: inherit; cursor: pointer; }
+  .btn{
+    border: none; border-radius: 10px; padding: 13px 22px;
+    background: var(--accent); color: #06231a; font-weight: 700; font-size: 15px;
+    transition: filter .15s ease, transform .1s ease;
+  }
+  .btn:hover{ filter: brightness(1.08); }
+  .btn:active{ transform: translateY(1px); }
+  .btn:disabled{ opacity: .45; cursor: not-allowed; filter:none; }
+  .btn.ghost{
+    background: transparent; color: var(--text); border: 1px solid var(--border);
+    font-weight: 600;
+  }
+  .btn.ghost:hover{ border-color: var(--accent); color: var(--accent); }
+  .btn-row{ display:flex; gap: 12px; margin-top: 24px; align-items:center; }
+
+  /* ---------- Quiz screen ---------- */
+  .progress-row{ display:flex; align-items:center; gap: 14px; margin-bottom: 18px; }
+  .progress-track{
+    flex: 1; height: 6px; border-radius: 4px; background: var(--surface-2);
+    overflow: hidden; border: 1px solid var(--border);
+  }
+  .progress-fill{ height: 100%; background: var(--accent); border-radius: 4px; transition: width .25s ease; }
+  .progress-count{ font-size: 13px; color: var(--text-dim); white-space:nowrap; }
+
+  .q-card{ padding: 28px; }
+  .q-meta{ display:flex; justify-content: space-between; align-items:center; margin-bottom: 14px; gap: 10px; flex-wrap: wrap;}
+  .topic-pill{
+    font-family: ui-monospace, monospace; font-size: 11.5px; letter-spacing: .05em;
+    background: var(--surface-2); border: 1px solid var(--border); color: var(--text-dim);
+    padding: 4px 10px; border-radius: 999px;
+  }
+  .mode-pill{
+    font-family: ui-monospace, monospace; font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--warn); border: 1px solid var(--warn-soft); background: var(--warn-soft);
+    padding: 4px 10px; border-radius: 999px;
+  }
+  .q-text{ font-size: 19px; line-height: 1.45; font-weight: 600; margin: 0 0 20px; text-wrap: balance; }
+
+  .options{ display:flex; flex-direction: column; gap: 10px; }
+  .opt{
+    display:flex; align-items:flex-start; gap: 12px;
+    text-align:left; width: 100%;
+    padding: 13px 14px; border-radius: 10px;
+    border: 1px solid var(--border); background: var(--surface-2); color: var(--text);
+    transition: border-color .12s ease, background .12s ease, transform .06s ease;
+  }
+  .opt:hover:not(:disabled){ border-color: var(--accent); }
+  .opt:focus-visible{ outline: 2px solid var(--accent); outline-offset: 2px; }
+  .opt:active:not(:disabled){ transform: translateY(1px); }
+  .opt .letter{
+    font-family: ui-monospace, monospace; font-size: 13px; font-weight: 700;
+    color: var(--text-dim); border: 1px solid var(--border); background: var(--surface);
+    width: 24px; height: 24px; border-radius: 6px; flex: none;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .opt .label{ font-size: 15px; line-height: 1.45; padding-top: 1px; }
+  .opt.chosen{ border-color: var(--accent); background: var(--accent-soft); }
+  .opt.chosen .letter{ color: var(--accent); border-color: var(--accent); }
+  .opt.correct{ border-color: var(--good); background: var(--good-soft); }
+  .opt.correct .letter{ color: var(--good); border-color: var(--good); background: transparent; }
+  .opt.wrong{ border-color: var(--bad); background: var(--bad-soft); }
+  .opt.wrong .letter{ color: var(--bad); border-color: var(--bad); }
+  .opt:disabled{ cursor: default; }
+
+  .feedback{
+    margin-top: 16px; padding: 14px 16px; border-radius: 10px;
+    font-size: 14px; line-height: 1.55; display:flex; gap: 10px; align-items:flex-start;
+  }
+  .feedback.good{ background: var(--good-soft); border: 1px solid var(--good); color: var(--text); }
+  .feedback.bad{ background: var(--bad-soft); border: 1px solid var(--bad); color: var(--text); }
+  .feedback .fic{ font-weight:800; flex: none; font-family: ui-monospace, monospace; }
+  .feedback.good .fic{ color: var(--good); }
+  .feedback.bad .fic{ color: var(--bad); }
+
+  .nav-row{ display:flex; justify-content: flex-end; margin-top: 22px; }
+
+  /* ---------- Results screen ---------- */
+  .score-card{ padding: 30px; display:flex; gap: 26px; align-items:center; flex-wrap: wrap; }
+  .ring-wrap{ position: relative; width: 128px; height: 128px; flex: none; }
+  .ring-wrap svg{ transform: rotate(-90deg); }
+  .ring-bg{ fill:none; stroke: var(--surface-2); stroke-width: 10; }
+  .ring-fg{ fill:none; stroke: var(--accent); stroke-width: 10; stroke-linecap: round; transition: stroke-dashoffset .6s ease; }
+  .ring-label{ position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+  .ring-label .pct{ font-family: ui-monospace, monospace; font-size: 26px; font-weight: 800; }
+  .ring-label .frac{ font-size: 12px; color: var(--text-dim); font-family: ui-monospace, monospace;}
+  .score-copy h2{ margin: 0 0 6px; font-family: Georgia, serif; font-size: 22px; }
+  .score-copy p{ margin: 0; color: var(--text-dim); font-size: 14px; max-width: 40ch; }
+
+  .breakdown{ padding: 24px 28px; margin-top: 16px; }
+  .breakdown h3{ margin: 0 0 14px; font-size: 14px; letter-spacing:.04em; text-transform: uppercase; color: var(--text-dim); font-weight:700; }
+  .topic-row{ display:flex; align-items:center; gap: 12px; padding: 7px 0; }
+  .topic-row .tname{ width: 210px; flex: none; font-size: 13.5px; color: var(--text); }
+  .topic-row .tbar{ flex:1; height: 8px; border-radius: 4px; background: var(--surface-2); overflow:hidden; border:1px solid var(--border); }
+  .topic-row .tbar > span{ display:block; height:100%; background: var(--accent); }
+  .topic-row .tfrac{ width: 44px; text-align:right; font-family: ui-monospace, monospace; font-size: 12.5px; color: var(--text-dim); flex:none; }
+
+  .review{ margin-top: 16px; display:flex; flex-direction:column; gap: 12px; }
+  .review-item{ padding: 18px 20px; border-left-width: 4px; border-left-style: solid; }
+  .review-item.ok{ border-left-color: var(--good); }
+  .review-item.no{ border-left-color: var(--bad); }
+  .review-item .rmeta{ display:flex; gap:8px; align-items:center; margin-bottom: 8px; }
+  .review-item .rq{ font-size: 15.5px; font-weight: 600; margin: 0 0 10px; line-height:1.4; }
+  .review-item .rline{ font-size: 13.5px; margin: 3px 0; line-height:1.5; }
+  .review-item .rline b{ font-weight: 700; }
+  .review-item .rline.yours.ok-text{ color: var(--good); }
+  .review-item .rline.yours.no-text{ color: var(--bad); }
+  .review-item .rexpl{ font-size: 13.5px; color: var(--text-dim); margin-top: 8px; line-height: 1.55; }
+
+  .hidden{ display:none !important; }
+
+  ::selection{ background: var(--accent-soft); }
+  a{ color: var(--accent); }
+</style>
+</head>
+<body>
+
+<canvas id="helix"></canvas>
+
+<div class="wrap">
+  <header class="top">
+    <span class="eyebrow">BIOINF · Introducción a la Programación Científica</span>
+    <h1>Quiz de repaso</h1>
+    <p class="sub">100 preguntas del banco original, repartidas en 10 temas. Cada partida sortea 30 preguntas al azar con las opciones barajadas.</p>
+  </header>
+
+  <!-- START SCREEN -->
+  <section id="screen-start" class="card start-card">
+    <div class="eyebrow" style="margin-bottom:6px;">Elige el modo</div>
+    <div class="mode-grid">
+      <button class="mode-opt selected" data-mode="study" id="mode-study">
+        <span class="tag">Estudiar</span>
+        <span class="name">Revisión instantánea</span>
+        <span class="desc">Ves si acertaste justo al elegir cada respuesta, con la explicación al momento. Ideal para repasar.</span>
+      </button>
+      <button class="mode-opt" data-mode="eval" id="mode-eval">
+        <span class="tag">Evaluar</span>
+        <span class="name">Revisión al final</span>
+        <span class="desc">No hay pistas mientras respondes. Ves la corrección completa y tu nota al terminar las 30 preguntas.</span>
+      </button>
+    </div>
+    <div class="stats-line">
+      <span>Banco de preguntas: <b id="bank-total">100</b></span>
+      <span>Preguntas por partida: <b>30</b></span>
+      <span>Temas cubiertos: <b>10</b></span>
+    </div>
+    <div class="btn-row">
+      <button class="btn" id="start-btn">Comenzar quiz →</button>
+    </div>
+  </section>
+
+  <!-- QUIZ SCREEN -->
+  <section id="screen-quiz" class="hidden">
+    <div class="progress-row">
+      <span class="progress-count mono" id="progress-count">1 / 30</span>
+      <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:3.3%"></div></div>
+      <span id="mode-badge" class="mode-pill">Estudiar</span>
+    </div>
+
+    <div class="card q-card">
+      <div class="q-meta">
+        <span class="topic-pill" id="topic-pill">TEMA 01 · Datos biológicos</span>
+      </div>
+      <p class="q-text" id="q-text">…</p>
+      <div class="options" id="options"></div>
+      <div id="feedback"></div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn" id="next-btn" disabled>Siguiente →</button>
+    </div>
+  </section>
+
+  <!-- RESULTS SCREEN -->
+  <section id="screen-results" class="hidden">
+    <div class="card score-card">
+      <div class="ring-wrap">
+        <svg width="128" height="128" viewBox="0 0 128 128">
+          <circle class="ring-bg" cx="64" cy="64" r="54"></circle>
+          <circle class="ring-fg" id="ring-fg" cx="64" cy="64" r="54" stroke-dasharray="339.3" stroke-dashoffset="339.3"></circle>
+        </svg>
+        <div class="ring-label">
+          <span class="pct" id="result-pct">0%</span>
+          <span class="frac" id="result-frac">0/30</span>
+        </div>
+      </div>
+      <div class="score-copy">
+        <h2 id="result-title">Resultado</h2>
+        <p id="result-copy">…</p>
+      </div>
+    </div>
+
+    <div class="card breakdown">
+      <h3>Resultado por tema</h3>
+      <div id="topic-breakdown"></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn" id="restart-btn">Nueva partida →</button>
+    </div>
+
+    <div class="review" id="review-list"></div>
+  </section>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+/* ---------------- Question bank (10 temas x 10 preguntas) ---------------- */
+var TOPICS = {
+  1:"Datos biológicos y bases de datos", 2:"Control de versiones (Git/GitHub)",
+  3:"Lenguajes y paradigmas", 4:"Fundamentos de programación", 5:"Sistemas operativos",
+  6:"Línea de comandos Unix/Linux", 7:"Comandos y permisos en Linux",
+  8:"Perl: sintaxis y estructuras", 9:"Perl: archivos y secuencias", 10:"BioPerl y módulos"
+};
+
+var BANK = [
+// TEMA 1
+{t:1,q:"¿Cuál de las siguientes son características de los datos biológicos?",o:["Son datos homogéneos y estructurados.","Tienden a mantenerse sin variación en el tiempo.","Solo son datos confirmados experimentalmente.","Son complejos y heterogéneos."],c:3,e:"Una de las características de los datos biológicos es su diversidad y complejidad."},
+{t:1,q:"¿Cuál de los siguientes NO es un propósito de la bioinformática?",o:["Organización y gestión de grandes cantidades de datos biológicos.","La restricción y custodia privada de datos biológicos.","El desarrollo de modelos que ayudan a explicar el funcionamiento de sistemas biológicos complejos.","Análisis de datos y su visualización."],c:1,e:"La bioinformática busca la reutilización de datos biológicos para favorecer el conocimiento científico."},
+{t:1,q:"¿Cuál de las siguientes opciones es una característica de los datos derivados de interpretaciones?",o:["Incluyen la estructura secundaria de una proteína.","Son aquellos que se obtienen mediante experimentos realizados en el laboratorio.","El investigador debe interpretar los datos crudos para obtener un resultado.","Incluyen el modelo de plegamiento de una proteína."],c:2,e:"Los datos derivados de interpretaciones son aquellos en que el investigador debe interpretar los datos crudos para obtener un resultado."},
+{t:1,q:"Selecciona la opción verdadera con respecto a las bases de datos primarias:",o:["Contienen datos directos de la experimentación.","El contenido es resultado de analizar los datos de otras bases de datos.","Están centradas en un campo de investigación concreto.","Incluyen procesos celulares reconstruidos."],c:0,e:"Las BD primarias contienen datos directos de la experimentación, como secuencias nucleotídicas y estructuras tridimensionales de proteínas."},
+{t:1,q:"Señala cuál de las siguientes afirmaciones es correcta en relación con la publicación de datos biológicos en línea:",o:["Es una práctica que debe evitarse.","Las revistas científicas más importantes exigen que los datos se encuentren en una base de datos para poder publicarse la investigación.","Requiere de una importante suma económica.","No aportan nada al investigador ni a la publicación."],c:1,e:"Algunas revistas exigen archivar los datos como requisito para publicar. Las BD bioinformáticas más relevantes son de acceso libre y gratuitas."},
+{t:1,q:"Selecciona la opción correcta en relación con las bases de datos secundarias:",o:["El contenido es resultado de analizar los datos de otras bases de datos.","Están centradas en un campo de investigación concreto.","Contienen datos directos de la experimentación.","Un ejemplo serían las bases de datos de secuencias nucleotídicas."],c:0,e:"Las BD secundarias incluyen contenido resultado de analizar datos de BD primarias: vías metabólicas, familias proteicas, procesos celulares reconstruidos, entre otros."},
+{t:1,q:"Selecciona la afirmación correcta sobre las bases de datos revisadas:",o:["Están centradas en un campo de investigación concreto.","Los autores introducen datos libremente.","Contienen datos directos de la experimentación.","Los revisores controlan la calidad de los datos."],c:3,e:"Las BD revisadas tienen revisores que controlan la calidad de los datos. UniProtKB es un ejemplo."},
+{t:1,q:"Selecciona la afirmación correcta sobre las bases de datos no revisadas:",o:["Los revisores se aseguran de que los datos sean coherentes y precisos.","UniProtKB es un ejemplo de este tipo de base de datos.","También se conocen como repositorios.","Están centradas en un campo de investigación concreto."],c:2,e:"Las BD no revisadas dejan que los autores introduzcan datos libremente; también se conocen como repositorios y suelen ser redundantes."},
+{t:1,q:"El acceso programático (API) a una base de datos es útil porque…",o:["Presenta un entorno gráfico fácil de usar para todos los usuarios.","No necesita conocimientos de programación.","Permite realizar búsquedas mediante la interfaz web.","Permite automatizar las consultas y crear flujos de trabajo."],c:3,e:"El acceso programático permite encadenar los resultados de una consulta en la siguiente sin intervención humana."},
+{t:1,q:"¿Cuál de las siguientes asociaciones base de datos–contenido es correcta?",o:["GenBank–Secuencias de nucleótidos, UniProtKB–Proteínas, PubMed–Literatura biomédica, Gene Ontology–Funciones de genes","GenBank–Proteínas, UniProtKB–Secuencias de nucleótidos, PubMed–Funciones de genes, Gene Ontology–Literatura biomédica","GenBank–Literatura biomédica, UniProtKB–Funciones de genes, PubMed–Secuencias de nucleótidos, Gene Ontology–Proteínas","GenBank–Funciones de genes, UniProtKB–Literatura biomédica, PubMed–Proteínas, Gene Ontology–Secuencias de nucleótidos"],c:0,e:"GenBank es una BD primaria de secuencias nucleotídicas. UniProtKB unifica secuencias proteicas. PubMed reúne literatura biomédica. Gene Ontology es la mayor fuente sobre funciones de genes."},
+// TEMA 2
+{t:2,q:"¿Qué es un repositorio en el contexto del control de versiones?",o:["Un lugar donde se almacenan las versiones antiguas de un proyecto.","Una herramienta para colaborar en línea con otros desarrolladores.","Un sistema de gestión de versiones para el seguimiento de cambios en archivos.","Un programa para la edición de código fuente."],c:2,e:"Los repositorios son el lugar donde se almacena y se realiza un seguimiento de las versiones de un proyecto o conjunto de archivos."},
+{t:2,q:"¿Cuál de las siguientes afirmaciones describe mejor a Git?",o:["Un sistema de control de versiones centralizado.","Una herramienta para el seguimiento de cambios en archivos de código fuente.","Una plataforma en línea para la colaboración en proyectos de código abierto.","Un sistema de control de versiones distribuido y descentralizado."],c:3,e:"Git permite trabajar de forma descentralizada y colaborar sin necesidad de una conexión constante a un servidor central."},
+{t:2,q:"¿Cuál es la función principal de GitHub?",o:["Almacenar y gestionar repositorios locales en el equipo del desarrollador.","Proporcionar herramientas de control de versiones para proyectos de bioinformática.","Facilitar la colaboración en línea y el almacenamiento de repositorios remotos.","Ofrecer un entorno de desarrollo integrado para la codificación de scripts en bioinformática."],c:2,e:"GitHub permite almacenar, colaborar y compartir repositorios de código fuente de forma remota."},
+{t:2,q:"¿Qué es un commit en Git?",o:["Un comando utilizado para clonar un repositorio remoto.","Una copia exacta de un repositorio local en un repositorio remoto.","Un cambio registrado en el historial de versiones de un repositorio.","Una solicitud de cambios propuesta por un colaborador en GitHub."],c:2,e:"Un commit representa un conjunto de cambios realizados en el repositorio local, registrado en el historial de versiones."},
+{t:2,q:"¿Qué es una rama (branch) en Git?",o:["Una etiqueta utilizada para marcar versiones específicas en el historial de un repositorio.","Un repositorio clonado de otro repositorio remoto.","Una copia exacta de un repositorio local en un directorio diferente.","Una línea de desarrollo independiente que permite trabajar en nuevas características o correcciones sin afectar la rama principal."],c:3,e:"Las ramas permiten crear líneas de desarrollo separadas sin afectar la rama principal del repositorio."},
+{t:2,q:"¿Qué es un repositorio remoto en Git?",o:["Una copia de seguridad de un repositorio local almacenada en la nube.","Un repositorio en el equipo local del desarrollador.","Un repositorio clonado de otro repositorio remoto.","Un repositorio almacenado en un servidor remoto al que se puede acceder y colaborar en línea."],c:3,e:"Un repositorio remoto, como en GitHub, permite colaborar y sincronizar cambios desde un servidor remoto."},
+{t:2,q:"¿Qué es una solicitud de cambios (pull request) en GitHub?",o:["Una petición para fusionar dos ramas en un repositorio local.","Una solicitud para agregar nuevas características a un proyecto en GitHub.","Una solicitud para eliminar cambios no deseados de un repositorio.","Una propuesta de colaboración en línea donde los cambios realizados en una rama se solicitan para su integración en otra rama."],c:3,e:"Un pull request permite proponer y discutir cambios antes de fusionarlos en la rama objetivo."},
+{t:2,q:"¿Cuál es el propósito del etiquetado (tagging) en Git?",o:["Marcar versiones específicas en el historial de un repositorio para un fácil acceso.","Eliminar cambios no deseados en un repositorio.","Crear copias exactas de un repositorio para su distribución.","Registrar y seguir el progreso de los cambios realizados en un repositorio."],c:0,e:"El etiquetado marca puntos específicos del historial, como versiones estables o hitos importantes."},
+{t:2,q:"¿Cuál es la función de la bifurcación (fork) en GitHub?",o:["Clonar un repositorio remoto en tu cuenta personal para realizar cambios.","Solicitar cambios en un repositorio para su integración en otro.","Crear una copia exacta de un repositorio local en otro directorio.","Establecer un punto de partida para la creación de una nueva rama en Git."],c:0,e:"El fork copia un repositorio a tu cuenta personal para trabajar de forma independiente antes de un pull request."},
+{t:2,q:"¿Cuál es la ventaja principal de utilizar un sistema de control de versiones en bioinformática?",o:["Permite almacenar y gestionar grandes cantidades de datos de secuencias genéticas.","Facilita la colaboración y el seguimiento de cambios en proyectos de bioinformática.","Permite ejecutar análisis de datos masivos en tiempo real.","Mejora la eficiencia en el diseño."],c:1,e:"Facilita el trabajo colaborativo, el seguimiento de cambios y la reversión a versiones anteriores."},
+// TEMA 3
+{t:3,q:"¿Qué es un lenguaje de programación de alto nivel?",o:["Un lenguaje fácil de entender para los humanos y que no necesita ser compilado.","Un lenguaje fácil de entender para los humanos y que necesita ser compilado.","Un lenguaje difícil de entender para los humanos y que no necesita ser compilado.","Un lenguaje difícil de entender para los humanos y que necesita ser compilado."],c:1,e:"Es fácil de leer para humanos, pero requiere compilación para traducirlo a un lenguaje que la máquina pueda ejecutar."},
+{t:3,q:"¿Qué es un lenguaje de programación de bajo nivel?",o:["Un lenguaje fácil de entender para los humanos y que no necesita ser compilado.","Un lenguaje fácil de entender para los humanos y que necesita ser compilado.","Un lenguaje difícil de entender para los humanos y que no necesita ser compilado.","Un lenguaje difícil de entender para los humanos y que necesita ser compilado."],c:3,e:"Está diseñado para ser entendido por la máquina y no por los humanos; se utiliza para programar sistemas operativos y controladores."},
+{t:3,q:"¿Qué es el lenguaje de máquina?",o:["El lenguaje que utiliza el hardware de la computadora para comunicarse.","El lenguaje que utilizan los humanos para comunicarse con la computadora.","El lenguaje que utilizan los humanos para programar.","El lenguaje que utiliza la CPU para comunicarse con los periféricos."],c:0,e:"Es un conjunto de instrucciones en código binario que la CPU entiende y ejecuta directamente; no es portátil entre distintas CPU."},
+{t:3,q:"¿Cuál de las siguientes opciones es un paradigma de programación?",o:["JAVA.","Python.","Orientación a objetos.","Ruby."],c:2,e:"JAVA, Python y Ruby son lenguajes de programación; la orientación a objetos es un paradigma centrado en objetos con atributos y métodos."},
+{t:3,q:"¿Cuál de los siguientes lenguajes de programación es un ejemplo de lenguaje de alto nivel?",o:["C.","Ensamblador.","Python.","Lenguaje de máquina."],c:2,e:"Python tiene una sintaxis cercana al lenguaje natural y no requiere conocimientos profundos de la máquina."},
+{t:3,q:"¿Cuál es la principal diferencia entre programar en un lenguaje de alto nivel y uno de bajo nivel?",o:["La velocidad de ejecución.","La facilidad de programación.","La compatibilidad con diferentes sistemas operativos.","La cantidad de recursos requeridos."],c:1,e:"Los lenguajes de alto nivel son más fáciles de programar gracias a sus abstracciones y sintaxis cercana al lenguaje natural."},
+{t:3,q:"¿Qué es un paradigma de programación?",o:["Un conjunto de reglas para la sintaxis de un lenguaje de programación.","Un estilo de programación que enfatiza la modularidad.","Una técnica para mejorar la velocidad de ejecución de un programa.","Una forma de pensar sobre cómo se debe diseñar un programa."],c:3,e:"Es un enfoque o filosofía sobre cómo diseñar y desarrollar un programa: orientado a objetos, funcional, procedural, etc."},
+{t:3,q:"¿Qué es un IDE?",o:["Una herramienta que permite crear y ejecutar programas escritos en un lenguaje de programación.","Un lenguaje de programación utilizado para el desarrollo web.","Una técnica para mejorar la eficiencia de los programas.","Una librería que proporciona funciones útiles para los programadores."],c:0,e:"Un IDE integra editor, depurador, compilador y otras herramientas de desarrollo."},
+{t:3,q:"¿Qué es la programación funcional?",o:["Un paradigma que se enfoca en la programación basada en la lógica y el razonamiento.","Un paradigma que se enfoca en la programación basada en la manipulación de objetos.","Un paradigma que se enfoca en la ejecución de tareas de manera estructurada.","Un paradigma que se enfoca en funciones y la evitación de efectos secundarios."],c:3,e:"Se enfoca en la evaluación de funciones y su composición para producir resultados sin efectos secundarios."},
+{t:3,q:"¿Cuál de las siguientes asociaciones herramienta/lenguaje–categoría es correcta?",o:["Ensamblador–Lenguaje de bajo nivel, Spyder–IDE, R–Lenguaje de alto nivel, Programación funcional–Paradigma","Ensamblador–Lenguaje de alto nivel, Spyder–Paradigma, R–IDE, Programación funcional–Lenguaje de bajo nivel","Ensamblador–IDE, Spyder–Lenguaje de bajo nivel, R–Paradigma, Programación funcional–Lenguaje de alto nivel","Ensamblador–Paradigma, Spyder–Lenguaje de alto nivel, R–Lenguaje de bajo nivel, Programación funcional–IDE"],c:0,e:"El ensamblador es de bajo nivel, R es de alto nivel, Spyder es un IDE para Python, y la programación funcional es un paradigma."},
+// TEMA 4
+{t:4,q:"¿Qué es una variable en programación?",o:["Una instrucción de control.","Un tipo de dato.","Una estructura de control.","Un contenedor para almacenar valores."],c:3,e:"Una variable es un espacio reservado en memoria para almacenar datos que pueden cambiar durante la ejecución."},
+{t:4,q:"¿Cuál de las siguientes opciones es un tipo de dato numérico?",o:["String.","Booleano.","Integer.","Array."],c:2,e:"Los datos numéricos pueden ser enteros (integer) o de punto flotante (float)."},
+{t:4,q:"¿Cuál de las siguientes estructuras de control permite repetir un bloque de código mientras se cumpla una condición?",o:["If-else (función si).","Switch.","For loop (bucle para).","Función."],c:2,e:"Un bucle for ejecuta un bloque de código repetidamente mientras se cumpla una condición específica."},
+{t:4,q:"¿Cuál de las siguientes operaciones aritméticas calcula el resto de la división entre dos números?",o:["Suma.","Resta.","Multiplicación.","Operador de módulo (%)."],c:3,e:"El operador de módulo (%) devuelve el resto de la división entre dos números."},
+{t:4,q:"¿Cuál de las siguientes opciones describe mejor el concepto de función en programación?",o:["Un tipo de dato.","Una instrucción de control.","Una estructura de datos.","Un bloque de código reutilizable que realiza una tarea específica."],c:3,e:"Una función agrupa instrucciones que pueden ser llamadas y ejecutadas desde cualquier parte del programa."},
+{t:4,q:"¿Cuál de las siguientes opciones es un tipo de dato booleano?",o:["String.","Integer.","Boolean.","Array."],c:2,e:"Los datos booleanos representan valores de verdadero (true) o falso (false)."},
+{t:4,q:"¿Cuál de las siguientes estructuras de control ejecuta un bloque de código si una condición se cumple y otro bloque si no se cumple?",o:["If-else.","Switch.","For loop.","While loop."],c:0,e:"La estructura if-else realiza una acción si una condición es verdadera y otra si es falsa."},
+{t:4,q:"¿Cuál de las siguientes operaciones lógicas evalúa a verdadero si al menos una de las condiciones es verdadera?",o:["AND.","OR.","NOT.","XOR."],c:1,e:"El operador lógico OR evalúa a verdadero si al menos una de las condiciones es verdadera."},
+{t:4,q:"¿Cuál de las siguientes opciones es una variable global en programación?",o:["Una variable declarada dentro de una función.","Una variable declarada dentro de un bucle.","Una variable declarada fuera de cualquier función o bloque de código.","Una variable declarada dentro de una estructura condicional."],c:2,e:"Una variable global se declara fuera de cualquier función y puede accederse desde cualquier parte del programa."},
+{t:4,q:"¿Qué tipo de estructura de control se utiliza para repetir un bloque de código mientras se cumpla una condición?",o:["Estructura de decisión.","Estructura iterativa.","Estructura secuencial.","Estructura de datos."],c:1,e:"La estructura iterativa (o de repetición) ejecuta repetidamente un bloque de código mientras se cumpla una condición."},
+// TEMA 5
+{t:5,q:"¿Cuál de los siguientes es un componente fundamental de un sistema operativo?",o:["Monitor.","Teclado.","Procesador.","Impresora."],c:2,e:"El procesador (CPU) ejecuta las instrucciones del sistema operativo y de los programas de usuario."},
+{t:5,q:"¿Cuál de las siguientes funciones es realizada por un sistema operativo?",o:["Navegación web.","Reproducción de música.","Gestión de memoria.","Edición de imágenes."],c:2,e:"La gestión de memoria asigna y libera memoria a los programas y procesos en ejecución."},
+{t:5,q:"¿Qué es un proceso en un sistema operativo?",o:["Una unidad de almacenamiento de datos.","Un componente físico de hardware.","Una tarea o programa en ejecución.","Un archivo de sistema."],c:2,e:"Un proceso es una instancia en ejecución de un programa; es la unidad básica de trabajo del sistema operativo."},
+{t:5,q:"¿Cuál de las siguientes actividades es realizada por el planificador de procesos?",o:["Gestión de archivos.","Control de impresoras.","Asignación de recursos de CPU.","Configuración de redes."],c:2,e:"El planificador decide qué procesos se ejecutan y cuándo, asignando los recursos de CPU."},
+{t:5,q:"¿Cuál de las siguientes afirmaciones describe mejor la multiprogramación en un sistema operativo?",o:["Ejecución de múltiples programas simultáneamente en distintos CPU.","Ejecución de múltiples hilos de un programa en paralelo.","Ejecución de múltiples procesos en un solo CPU, alternando entre ellos.","Ejecución de múltiples tareas en diferentes dispositivos de entrada/salida."],c:2,e:"La multiprogramación ejecuta varios procesos en un solo CPU alternando rápidamente, dando una aparente ejecución simultánea."},
+{t:5,q:"¿Qué es un bloque de control de procesos (BCP) en un sistema operativo?",o:["Un dispositivo de almacenamiento secundario.","Una interfaz gráfica de usuario.","Una estructura de datos que contiene información sobre un proceso.","Un componente de red para la comunicación entre procesos."],c:2,e:"El BCP almacena información específica de cada proceso: estado, recursos asignados, identificador, etc."},
+{t:5,q:"¿Qué es la planificación de procesos en un sistema operativo?",o:["El proceso de asignar memoria a los procesos en ejecución.","La administración y control de los recursos de E/S.","La determinación de la secuencia y el orden de ejecución de los procesos.","La gestión de archivos y directorios en el sistema operativo."],c:2,e:"Consiste en decidir el orden de ejecución de los procesos en el CPU según prioridad y políticas de planificación."},
+{t:5,q:"¿Cuál de las siguientes afirmaciones describe mejor la gestión de memoria en un sistema operativo?",o:["Controlar el acceso a los recursos de E/S.","Asignar y liberar memoria a los procesos en ejecución.","Establecer prioridades para los procesos en ejecución.","Administrar el sistema de archivos y directorios."],c:1,e:"Su objetivo es garantizar un uso eficiente de la memoria y evitar fragmentación y sobrecarga."},
+{t:5,q:"¿Cuál de las siguientes actividades está asociada con la gestión de archivos en un sistema operativo?",o:["Planificación de procesos.","Control de dispositivos de E/S.","Sincronización de hilos de ejecución.","Organización y acceso a datos almacenados en memoria secundaria."],c:3,e:"La gestión de archivos organiza y da acceso a los datos almacenados en memoria secundaria."},
+{t:5,q:"¿Cuál de las siguientes actividades está asociada con la gestión de dispositivos en un sistema operativo?",o:["Planificación de procesos.","Gestión de memoria virtual.","Coordinación de la ejecución concurrente de hilos.","Control de acceso y uso de dispositivos de entrada/salida."],c:3,e:"El sistema operativo asigna y gestiona los recursos de E/S, permitiendo a los procesos interactuar con los dispositivos."},
+// TEMA 6
+{t:6,q:"¿Cuál de las siguientes opciones describe mejor la línea de comandos de un sistema Unix/Linux?",o:["Una interfaz gráfica que permite interactuar mediante ventanas y elementos visuales.","Un lenguaje de programación utilizado para desarrollar aplicaciones en Linux.","Una herramienta utilizada para ejecutar comandos y realizar tareas mediante texto.","Una partición especial utilizada exclusivamente para archivos de sistema."],c:2,e:"La línea de comandos es una interfaz en la que se ingresan comandos de texto para interactuar con el sistema operativo."},
+{t:6,q:"¿Cuál de los siguientes comandos se utiliza para cambiar el directorio de trabajo actual en Linux?",o:["cd","ls","mv","cp"],c:0,e:"El comando cd cambia el directorio de trabajo actual a uno especificado."},
+{t:6,q:"¿Cuál de las siguientes opciones describe mejor una ruta absoluta en el sistema de archivos de Linux?",o:["Una ruta relativa que comienza desde el directorio de inicio del usuario.","Una ruta que comienza desde el directorio raíz del sistema (/).","Una ruta que apunta a un archivo en un dispositivo de almacenamiento externo.","Una ruta que especifica un archivo en un directorio padre del directorio actual."],c:1,e:"Una ruta absoluta comienza desde el directorio raíz del sistema, representado por el símbolo /."},
+{t:6,q:"¿Cuál de los siguientes comandos se utiliza para mostrar el directorio de trabajo actual en Linux?",o:["pwd","ls","cd","cat"],c:0,e:"El comando pwd muestra la ubicación actual en el sistema de archivos."},
+{t:6,q:"¿Cuál de las siguientes opciones describe mejor una ruta relativa en el sistema de archivos de Linux?",o:["Una ruta que comienza desde el directorio raíz del sistema (/).","Una ruta que especifica un archivo en un directorio padre del directorio actual.","Una ruta que apunta a un archivo en un dispositivo de almacenamiento externo.","Una ruta relativa al directorio de inicio del usuario."],c:1,e:"Una ruta relativa especifica un archivo respecto al directorio actual o un directorio padre de este."},
+{t:6,q:"¿Cuál de los siguientes comandos se utiliza para listar los archivos y directorios en Linux?",o:["ls","cd","rm","mv"],c:0,e:"El comando ls lista los archivos y directorios en un directorio específico."},
+{t:6,q:"¿Cuál de las siguientes opciones describe mejor el propósito del comando mkdir en Linux?",o:["Cambiar el nombre de un archivo o directorio.","Eliminar un archivo o directorio.","Crear un nuevo directorio.","Mover un archivo o directorio."],c:2,e:"El comando mkdir crea un nuevo directorio en el sistema de archivos."},
+{t:6,q:"¿Cuál de los siguientes comandos se utiliza para copiar archivos o directorios en Linux?",o:["cp","mv","rm","ls"],c:0,e:"El comando cp copia archivos o directorios en el sistema de archivos."},
+{t:6,q:"¿Cuál de las siguientes opciones describe mejor el propósito del comando rm en Linux?",o:["Cambiar el nombre de un archivo o directorio.","Eliminar un archivo o directorio.","Crear un nuevo directorio.","Mover un archivo o directorio."],c:1,e:"El comando rm elimina (borra) un archivo o directorio del sistema de archivos."},
+{t:6,q:"¿Cuál de las siguientes opciones describe mejor un archivo en el contexto de un sistema operativo?",o:["Un directorio que almacena otros archivos y subdirectorios.","Una ubicación física en el disco duro donde se almacenan los datos.","Una secuencia de comandos utilizada para ejecutar tareas específicas.","Un conjunto de datos organizados y guardados en una ubicación específica."],c:3,e:"Un archivo almacena datos (textos, imágenes, programas, etc.) en una ubicación específica dentro del sistema de archivos."},
+// TEMA 7
+{t:7,q:"¿Cuál es el comando utilizado para cambiar al directorio anterior?",o:["cd ..","cd -","cd ~","cd ."],c:0,e:"El comando cd .. cambia al directorio padre, es decir, al directorio anterior en la jerarquía."},
+{t:7,q:"¿Cuál es el comando para cambiar los permisos de un archivo en Linux?",o:["chmod","chown","chgrp","Permisos"],c:0,e:"El comando chmod cambia los permisos de un archivo o directorio, controlando quién puede leer, escribir o ejecutar."},
+{t:7,q:"¿Qué permisos se otorgan al propietario de un archivo con chmod 755 archivo?",o:["Lectura y ejecución.","Lectura y escritura.","Lectura, escritura y ejecución.","Ninguno de los anteriores."],c:2,e:"Con chmod 755 archivo se otorgan permisos de lectura, escritura y ejecución al propietario."},
+{t:7,q:"¿Cuál es el shebang utilizado en un script de shell?",o:["#!","//","%%","--"],c:0,e:"El shebang #! indica al sistema qué intérprete debe ejecutar el script, por ejemplo #!/bin/bash."},
+{t:7,q:"¿Qué comando se utiliza para cambiar el nombre de un archivo o directorio en Linux?",o:["mv","cp","rename","edit"],c:0,e:"El comando mv mueve o renombra archivos y directorios: mv archivo_actual nuevo_nombre."},
+{t:7,q:"¿Cuál es el comando utilizado para crear un directorio en Linux?",o:["mkdir","mkfile","touch","newdir"],c:0,e:"El comando mkdir crea un nuevo directorio, por ejemplo mkdir carpeta."},
+{t:7,q:"¿Cuál es el operador de redirección utilizado para enviar la salida de un comando a un archivo en Linux?",o:[">","|","<<","&"],c:0,e:"El operador > redirige la salida estándar de un comando a un archivo, por ejemplo ls > archivo.txt."},
+{t:7,q:"¿Qué comando se utiliza para dar permisos de ejecución a un archivo en Linux?",o:["chmod +x","chown","chmod -w","chgrp"],c:0,e:"El comando chmod +x da permisos de ejecución para que el archivo pueda ejecutarse como programa o script."},
+{t:7,q:"¿Cuál es el comando para buscar archivos o directorios en Linux?",o:["find","search","locate","scan"],c:0,e:"El comando find busca archivos o directorios según criterios como nombre, tamaño o permisos."},
+{t:7,q:"¿Cuál es el comando utilizado para ejecutar un script de shell en Linux?",o:["./script.sh","run script.sh","execute script.sh","start script.sh"],c:0,e:"Para ejecutar un script de shell se usa ./script.sh, indicando al sistema que el archivo debe interpretarse y ejecutarse."},
+// TEMA 8
+{t:8,q:"¿Qué es Perl?",o:["Un lenguaje de programación orientado a objetos.","Un lenguaje de programación para bioinformática.","Un lenguaje de programación para desarrollo web.","Un lenguaje de programación para inteligencia artificial."],c:1,e:"Perl es un lenguaje de propósito general muy usado en bioinformática por sus capacidades de manejo de texto."},
+{t:8,q:"¿Cuál es la forma correcta de declarar una variable escalar en Perl?",o:["my $variable = 10;","my variable = 10;","my %variable = 10;","my @variable = 10;"],c:0,e:"En Perl las variables escalares se declaran con el símbolo $ seguido del nombre de la variable."},
+{t:8,q:"¿Cuál es el operador utilizado para concatenar cadenas de texto en Perl?",o:["+","*",".",":"],c:2,e:"En Perl el operador . concatena dos cadenas de texto en una sola."},
+{t:8,q:"¿Cuál de las siguientes estructuras de control se utiliza para repetir un bloque de código mientras se cumpla una condición?",o:["if-else.","for.","while.","switch."],c:2,e:"La estructura while repite un bloque de código mientras se cumpla una condición especificada."},
+{t:8,q:"¿Cuál de las siguientes opciones describe mejor las expresiones regulares en Perl?",o:["Son patrones de texto que se utilizan para buscar y manipular cadenas de caracteres.","Son variables que almacenan múltiples valores en una sola entidad.","Son subrutinas predefinidas en Perl que realizan tareas específicas.","Son módulos externos que se utilizan para ampliar las capacidades de Perl."],c:0,e:"Las expresiones regulares permiten buscar, extraer y manipular cadenas de caracteres de manera eficiente."},
+{t:8,q:"¿Cuál de las siguientes opciones describe mejor una subrutina en Perl?",o:["Una estructura de control utilizada para tomar decisiones basadas en condiciones.","Una expresión regular que busca coincidencias en una cadena de texto.","Una variable que almacena múltiples valores en una sola entidad.","Una porción de código que realiza una tarea específica y puede ser llamada desde otras partes del programa."],c:3,e:"Una subrutina es un bloque de código que realiza una tarea específica y puede llamarse desde otras partes del programa."},
+{t:8,q:"¿Qué son los módulos en Perl?",o:["Estructuras de control utilizadas para repetir bloques de código.","Variables que almacenan múltiples valores en una sola entidad.","Subrutinas predefinidas en Perl que realizan tareas específicas.","Archivos externos que contienen funciones y variables para ampliar las capacidades de Perl."],c:3,e:"Los módulos son archivos externos con funciones, variables y declaraciones que amplían las capacidades de Perl."},
+{t:8,q:"¿Cuál es la forma correcta de definir una subrutina en Perl?",o:["subrutina nombresubrutina {}","sub nombresubrutina {}","def subrutina nombresubrutina {}","function nombresubrutina {}"],c:1,e:"En Perl se usa la palabra clave sub seguida del nombre de la subrutina para definirla."},
+{t:8,q:"¿Qué declaración se utiliza para retornar un valor desde una subrutina en Perl?",o:["return.","yield.","exit.","break."],c:0,e:"En Perl la declaración return devuelve un valor desde una subrutina al lugar donde fue invocada."},
+{t:8,q:"¿Cuál es la principal diferencia entre un array y un hash en Perl?",o:["Los arrays almacenan datos en orden secuencial, mientras que los hashes almacenan datos asociados con claves únicas.","Los arrays solo pueden contener valores numéricos, mientras que los hashes pueden contener cualquier tipo de dato.","Los arrays son más eficientes en términos de espacio de memoria que los hashes.","Los hashes son más fáciles de manipular y acceder a los datos que los arrays."],c:0,e:"Un array almacena valores en orden secuencial accesibles por índices; un hash almacena datos asociados a claves únicas."},
+// TEMA 9
+{t:9,q:"¿Cuál es la función en Perl para abrir un archivo de texto para lectura?",o:["open_file()","read_file()","open()","file open()"],c:2,e:"La función open() abre un archivo, tomando el nombre, el modo de apertura y un identificador de archivo."},
+{t:9,q:"¿Cuál es el operador utilizado para leer una línea de un archivo en Perl?",o:["<>","<<","()","//"],c:0,e:"El operador <> lee una línea de un archivo; en contexto escalar lee una línea a la vez."},
+{t:9,q:"¿Cuál es la función utilizada para escribir en un archivo de texto en Perl?",o:["write()","append()","print()","save()"],c:2,e:"La función print() escribe uno o más argumentos en el identificador de archivo especificado."},
+{t:9,q:"¿Cuál es la función utilizada para buscar un patrón en una cadena de texto en Perl?",o:["find()","match()","search()","regex()"],c:1,e:"La función match() busca un patrón mediante expresiones regulares y devuelve verdadero si hay coincidencia."},
+{t:9,q:"¿Cuál es la función utilizada para traducir una secuencia de ADN a una secuencia de proteínas en Perl?",o:["translate()","convert()","dna2protein()","transcribe()"],c:0,e:"La función translate() traduce una secuencia de ADN a proteínas utilizando el código genético estándar."},
+{t:9,q:"¿Cuál es la función utilizada para formatear líneas y columnas en un archivo de texto en Perl?",o:["format()","print()","write()","formatwrite()"],c:0,e:"La función format() define un formato específico para imprimir líneas y columnas, usada junto con write()."},
+{t:9,q:"¿Qué función se utiliza en Perl para dividir una cadena en elementos individuales según un delimitador?",o:["divide()","separate()","split()","extract()"],c:2,e:"La función split() divide una cadena usando un delimitador, devolviendo una lista de elementos."},
+{t:9,q:"¿Cuál es la función utilizada para buscar un patrón específico en una secuencia de ADN en Perl?",o:["search()","patternmatch()","Bio::Seq->find()","regexsearch()"],c:3,e:"Se puede usar regex_search() para buscar un patrón en una secuencia de ADN mediante expresiones regulares."},
+{t:9,q:"¿Cuál es la función utilizada para buscar una subcadena en una secuencia de ADN en Perl?",o:["index()","find()","search()","match()"],c:0,e:"La función index() busca una subcadena y devuelve la posición de su primera aparición."},
+{t:9,q:"¿Cuál es la función utilizada para obtener la longitud de una secuencia de ADN en Perl?",o:["length()","size()","count()","sizeof()"],c:0,e:"La función length() devuelve el número de bases que componen una secuencia de ADN."},
+// TEMA 10
+{t:10,q:"¿Qué es BioPerl?",o:["Un lenguaje de programación.","Un conjunto de módulos de Perl para bioinformática.","Un sistema operativo.","Un editor de texto."],c:1,e:"BioPerl es una colección de módulos de Perl para el análisis y manipulación de datos biológicos."},
+{t:10,q:"¿Cuál de las siguientes opciones describe mejor un script de Perl?",o:["Una imagen gráfica.","Un archivo de texto plano.","Un documento de Microsoft Word.","Un archivo de audio."],c:1,e:"Un script de Perl es un archivo de texto plano con instrucciones en el lenguaje Perl."},
+{t:10,q:"¿Cuál es el objetivo principal de utilizar módulos en Perl?",o:["Hacer que el código sea más difícil de entender.","Ahorrar tiempo al reutilizar código existente.","Aumentar el tamaño del archivo de código.","Limitar la funcionalidad del programa."],c:1,e:"Los módulos permiten reutilizar código existente, ahorrando tiempo y esfuerzo."},
+{t:10,q:"¿Qué función cumple BioPerl en la bioinformática?",o:["Analizar datos financieros.","Manipular imágenes médicas.","Trabajar con datos biológicos y genómicos.","Desarrollar juegos de video."],c:2,e:"BioPerl está diseñada específicamente para el análisis y manipulación de datos biológicos y genómicos."},
+{t:10,q:"¿Qué significa «reutilización de código» en el contexto de la programación?",o:["Escribir código nuevo sin referenciar al código existente.","Copiar y pegar código de otros programas.","Utilizar funciones y estructuras de datos ya implementadas.","Eliminar el código no utilizado de un programa."],c:2,e:"Implica utilizar funciones y estructuras de datos ya implementadas, en lugar de reescribir el mismo código."},
+{t:10,q:"¿Cuál es la extensión de archivo comúnmente utilizada para los scripts de Perl?",o:[".txt",".exe",".doc",".pl"],c:3,e:"Los scripts de Perl generalmente tienen la extensión .pl."},
+{t:10,q:"¿Cuál de las siguientes opciones describe mejor un módulo en Perl?",o:["Una variable numérica.","Una función matemática.","Un archivo de configuración.","Un conjunto de funciones y variables relacionadas."],c:3,e:"Un módulo agrupa funciones y variables relacionadas en un solo archivo, proporcionando funcionalidad reutilizable."},
+{t:10,q:"¿Cuál es el propósito principal de un script en BioPerl?",o:["Realizar cálculos matemáticos complejos.","Generar visualizaciones gráficas de datos biológicos.","Manipular y analizar datos biológicos utilizando los módulos de BioPerl.","Almacenar información en una base de datos."],c:2,e:"Los scripts en BioPerl manipulan y analizan datos biológicos utilizando los módulos que proporciona la biblioteca."},
+{t:10,q:"¿Cuál es la sintaxis correcta del shebang para especificar el intérprete de Perl en un script?",o:["#!perl/bin","#!usr/bin/perl","#!/bin/perl","#!/usr/bin/perl"],c:3,e:"La sintaxis correcta es #!/usr/bin/perl, que indica al sistema qué intérprete debe ejecutar el script."},
+{t:10,q:"¿Qué beneficios ofrece el uso de módulos en scripts de Perl?",o:["Facilitan la depuración del código.","Aumentan la complejidad del programa.","Hacen que el código sea más difícil de mantener.","Promueven la reutilización del código y facilitan el desarrollo."],c:3,e:"El uso de módulos promueve la reutilización del código, facilita el desarrollo y mejora la eficiencia."}
+];
+
+document.getElementById("bank-total").textContent = BANK.length;
+
+/* ---------------- helpers ---------------- */
+function shuffle(arr){
+  var a = arr.slice();
+  for(var i=a.length-1;i>0;i--){
+    var j = Math.floor(Math.random()*(i+1));
+    var tmp=a[i]; a[i]=a[j]; a[j]=tmp;
+  }
+  return a;
+}
+function sample(arr, n){ return shuffle(arr).slice(0,n); }
+function letterFor(i){ return String.fromCharCode(65+i); }
+
+/* ---------------- state ---------------- */
+var QUIZ_LEN = 30;
+var state = { mode:"study", questions:[], idx:0, answers:[] };
+
+/* ---------------- DOM refs ---------------- */
+var screenStart = document.getElementById("screen-start");
+var screenQuiz = document.getElementById("screen-quiz");
+var screenResults = document.getElementById("screen-results");
+var modeStudyBtn = document.getElementById("mode-study");
+var modeEvalBtn = document.getElementById("mode-eval");
+var startBtn = document.getElementById("start-btn");
+var restartBtn = document.getElementById("restart-btn");
+var nextBtn = document.getElementById("next-btn");
+
+modeStudyBtn.addEventListener("click", function(){ selectMode("study"); });
+modeEvalBtn.addEventListener("click", function(){ selectMode("eval"); });
+function selectMode(m){
+  state.mode = m;
+  modeStudyBtn.classList.toggle("selected", m==="study");
+  modeEvalBtn.classList.toggle("selected", m==="eval");
+}
+
+startBtn.addEventListener("click", function(){
+  buildQuiz();
+  screenStart.classList.add("hidden");
+  screenQuiz.classList.remove("hidden");
+  screenResults.classList.add("hidden");
+  renderQuestion();
+});
+
+restartBtn.addEventListener("click", function(){
+  screenResults.classList.add("hidden");
+  screenStart.classList.remove("hidden");
+});
+
+nextBtn.addEventListener("click", function(){
+  if(state.idx < state.questions.length - 1){
+    state.idx++;
+    renderQuestion();
+  } else {
+    showResults();
+  }
+});
+
+function buildQuiz(){
+  var picked = sample(BANK, QUIZ_LEN);
+  state.questions = picked.map(function(item){
+    var order = shuffle([0,1,2,3]);
+    var opts = order.map(function(oi){ return item.o[oi]; });
+    var correctIdx = order.indexOf(item.c);
+    return { t:item.t, q:item.q, o:opts, c:correctIdx, e:item.e };
+  });
+  state.idx = 0;
+  state.answers = new Array(state.questions.length).fill(null);
+}
+
+function renderQuestion(){
+  var i = state.idx;
+  var item = state.questions[i];
+  document.getElementById("progress-count").textContent = (i+1) + " / " + state.questions.length;
+  document.getElementById("progress-fill").style.width = (((i+1)/state.questions.length)*100) + "%";
+  document.getElementById("mode-badge").textContent = state.mode === "study" ? "Estudiar" : "Evaluar";
+  document.getElementById("topic-pill").textContent = "TEMA " + String(item.t).padStart(2,"0") + " · " + TOPICS[item.t];
+  document.getElementById("q-text").textContent = item.q;
+
+  var optsWrap = document.getElementById("options");
+  optsWrap.innerHTML = "";
+  var fb = document.getElementById("feedback");
+  fb.innerHTML = "";
+  nextBtn.disabled = true;
+  nextBtn.textContent = (i === state.questions.length - 1) ? "Ver resultados →" : "Siguiente →";
+
+  var already = state.answers[i];
+
+  item.o.forEach(function(optText, oi){
+    var b = document.createElement("button");
+    b.className = "opt";
+    b.innerHTML = '<span class="letter">' + letterFor(oi) + '</span><span class="label"></span>';
+    b.querySelector(".label").textContent = optText;
+    b.addEventListener("click", function(){ selectOption(oi); });
+    optsWrap.appendChild(b);
+  });
+
+  if(already !== null){
+    applyAnswerState(already);
+  }
+}
+
+function selectOption(oi){
+  var i = state.idx;
+  if(state.answers[i] !== null) return;
+  state.answers[i] = oi;
+  applyAnswerState(oi);
+}
+
+function applyAnswerState(oi){
+  var i = state.idx;
+  var item = state.questions[i];
+  var buttons = document.querySelectorAll("#options .opt");
+  var isCorrect = oi === item.c;
+
+  buttons.forEach(function(btn, idx){
+    btn.disabled = true;
+    if(state.mode === "study"){
+      if(idx === item.c) btn.classList.add("correct");
+      if(idx === oi && idx !== item.c) btn.classList.add("wrong");
+      if(idx === oi && idx === item.c) btn.classList.add("chosen");
+    } else {
+      if(idx === oi) btn.classList.add("chosen");
+    }
+  });
+
+  var fb = document.getElementById("feedback");
+  if(state.mode === "study"){
+    fb.className = "feedback " + (isCorrect ? "good" : "bad");
+    fb.innerHTML = '<span class="fic">' + (isCorrect ? "✓" : "✗") + '</span><span>' +
+      (isCorrect ? "¡Correcto! " : "Incorrecto. La respuesta correcta es la " + letterFor(item.c) + ". ") +
+      item.e + "</span>";
+  } else {
+    fb.className = "";
+    fb.innerHTML = "";
+  }
+  nextBtn.disabled = false;
+}
+
+function showResults(){
+  screenQuiz.classList.add("hidden");
+  screenResults.classList.remove("hidden");
+
+  var total = state.questions.length;
+  var correct = 0;
+  var byTopic = {};
+  state.answers.forEach(function(ans, i){
+    var item = state.questions[i];
+    var ok = ans === item.c;
+    if(ok) correct++;
+    if(!byTopic[item.t]) byTopic[item.t] = {ok:0, total:0};
+    byTopic[item.t].total++;
+    if(ok) byTopic[item.t].ok++;
+  });
+  var pct = Math.round((correct/total)*100);
+
+  var circumference = 2 * Math.PI * 54;
+  var ring = document.getElementById("ring-fg");
+  ring.setAttribute("stroke-dasharray", circumference.toFixed(1));
+  ring.setAttribute("stroke-dashoffset", (circumference * (1 - correct/total)).toFixed(1));
+  document.getElementById("result-pct").textContent = pct + "%";
+  document.getElementById("result-frac").textContent = correct + "/" + total;
+
+  var title, copy;
+  if(pct >= 90){ title = "Dominio sólido"; copy = "Conoces el temario a fondo. Repite en modo Evaluar para mantenerlo fresco."; }
+  else if(pct >= 70){ title = "Buen nivel"; copy = "Vas bien encaminado. Repasa los temas más flojos en el detalle de abajo."; }
+  else if(pct >= 50){ title = "En progreso"; copy = "Hay base, pero conviene repasar. Usa el modo Estudiar en los temas peor puntuados."; }
+  else { title = "A repasar"; copy = "Conviene volver al material y repetir el quiz en modo Estudiar antes de evaluarte de nuevo."; }
+  document.getElementById("result-title").textContent = title;
+  document.getElementById("result-copy").textContent = copy;
+
+  var bd = document.getElementById("topic-breakdown");
+  bd.innerHTML = "";
+  Object.keys(byTopic).map(Number).sort(function(a,b){return a-b;}).forEach(function(t){
+    var d = byTopic[t];
+    var row = document.createElement("div");
+    row.className = "topic-row";
+    var barPct = (d.ok/d.total)*100;
+    row.innerHTML =
+      '<span class="tname">T' + String(t).padStart(2,"0") + ' · ' + TOPICS[t] + '</span>' +
+      '<span class="tbar"><span style="width:' + barPct + '%"></span></span>' +
+      '<span class="tfrac mono">' + d.ok + '/' + d.total + '</span>';
+    bd.appendChild(row);
+  });
+
+  var review = document.getElementById("review-list");
+  review.innerHTML = "";
+  state.questions.forEach(function(item, i){
+    var ans = state.answers[i];
+    var ok = ans === item.c;
+    var div = document.createElement("div");
+    div.className = "card review-item " + (ok ? "ok" : "no");
+    var yourLine = ans === null
+      ? '<div class="rline yours no-text"><b>Tu respuesta:</b> sin responder</div>'
+      : '<div class="rline yours ' + (ok?"ok-text":"no-text") + '"><b>Tu respuesta:</b> ' + letterFor(ans) + '. ' + item.o[ans] + '</div>';
+    var correctLine = ok ? "" : '<div class="rline"><b>Correcta:</b> ' + letterFor(item.c) + '. ' + item.o[item.c] + '</div>';
+    div.innerHTML =
+      '<div class="rmeta"><span class="topic-pill">T' + String(item.t).padStart(2,"0") + ' · ' + TOPICS[item.t] + '</span></div>' +
+      '<p class="rq">' + (i+1) + ". " + item.q + '</p>' +
+      yourLine + correctLine +
+      '<div class="rexpl">' + item.e + '</div>';
+    review.appendChild(div);
+  });
+}
+
+/* ---------------- decorative helix backdrop ---------------- */
+(function(){
+  var canvas = document.getElementById("helix");
+  var ctx = canvas.getContext("2d");
+  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var w, h, dpr;
+  function resize(){
+    dpr = Math.min(window.devicePixelRatio||1, 2);
+    w = window.innerWidth; h = window.innerHeight;
+    canvas.width = w*dpr; canvas.height = h*dpr;
+    canvas.style.width = w+"px"; canvas.style.height = h+"px";
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  window.addEventListener("resize", resize);
+  resize();
+
+  function accentColor(){
+    var v = getComputedStyle(document.documentElement).getPropertyValue("--accent").trim();
+    return v || "#3fc296";
+  }
+
+  function draw(t){
+    ctx.clearRect(0,0,w,h);
+    var col = accentColor();
+    var amp = Math.min(120, w*0.12);
+    var cx = w*0.82;
+    var spacing = 34;
+    ctx.lineWidth = 1;
+    for(var y=-40; y<h+40; y+=spacing){
+      var phase = (y/140) + (reduced?0:t*0.00035);
+      var x1 = cx + Math.sin(phase)*amp;
+      var x2 = cx + Math.sin(phase+Math.PI)*amp;
+      var r1 = 2.4 + Math.cos(phase)*1.1;
+      var r2 = 2.4 + Math.cos(phase+Math.PI)*1.1;
+
+      ctx.globalAlpha = 0.14;
+      ctx.strokeStyle = col;
+      ctx.beginPath(); ctx.moveTo(x1,y); ctx.lineTo(x2,y); ctx.stroke();
+
+      ctx.globalAlpha = 0.55;
+      ctx.fillStyle = col;
+      ctx.beginPath(); ctx.arc(x1,y,r1,0,Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(x2,y,r2,0,Math.PI*2); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  if(reduced){
+    draw(0);
+  } else {
+    function loop(t){ draw(t); requestAnimationFrame(loop); }
+    requestAnimationFrame(loop);
+  }
+})();
+
+})();
+</script>
+</body>
+</html>
