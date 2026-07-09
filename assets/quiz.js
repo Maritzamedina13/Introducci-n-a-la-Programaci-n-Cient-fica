@@ -13,12 +13,17 @@ var topicCount = Object.keys(TOPICS).length;
 /* ---------------- build page shell ---------------- */
 document.title = META.pageTitle || META.title;
 
+var companionLink = META.companion
+  ? '<p class="sub"><a class="back-link" href="' + META.companion.href + '">' + META.companion.label + ' →</a></p>'
+  : "";
+
 var app = document.getElementById("app");
 app.innerHTML =
   '<header class="top">' +
     '<span class="eyebrow">' + META.eyebrow + '</span>' +
     '<h1>' + META.title + '</h1>' +
     '<p class="sub">' + META.sub + '</p>' +
+    companionLink +
     '<p class="sub"><a class="back-link" href="../index.html">← Todos los módulos</a></p>' +
   '</header>' +
 
@@ -57,6 +62,7 @@ app.innerHTML =
         '<span class="topic-pill" id="topic-pill">…</span>' +
       '</div>' +
       '<p class="q-text" id="q-text">…</p>' +
+      '<div class="q-img-wrap" id="q-img-wrap"></div>' +
       '<div class="options" id="options"></div>' +
       '<div id="feedback"></div>' +
     '</div>' +
@@ -153,7 +159,7 @@ function buildQuiz(){
     var order = shuffle([0,1,2,3]);
     var opts = order.map(function(oi){ return item.o[oi]; });
     var correctIdx = order.indexOf(item.c);
-    return { t:item.t, q:item.q, o:opts, c:correctIdx, e:item.e };
+    return { t:item.t, q:item.q, o:opts, c:correctIdx, e:item.e, img:item.img || null };
   });
   state.idx = 0;
   state.answers = new Array(state.questions.length).fill(null);
@@ -167,6 +173,16 @@ function renderQuestion(){
   document.getElementById("mode-badge").textContent = state.mode === "study" ? "Estudiar" : "Evaluar";
   document.getElementById("topic-pill").textContent = "TEMA " + String(item.t).padStart(2,"0") + " · " + TOPICS[item.t];
   document.getElementById("q-text").textContent = item.q;
+
+  var imgWrap = document.getElementById("q-img-wrap");
+  imgWrap.innerHTML = "";
+  if(item.img){
+    var img = document.createElement("img");
+    img.className = "q-img";
+    img.src = item.img;
+    img.alt = "Gráfico de la pregunta";
+    imgWrap.appendChild(img);
+  }
 
   var optsWrap = document.getElementById("options");
   optsWrap.innerHTML = "";
@@ -285,9 +301,11 @@ function showResults(){
       ? '<div class="rline yours no-text"><b>Tu respuesta:</b> sin responder</div>'
       : '<div class="rline yours ' + (ok?"ok-text":"no-text") + '"><b>Tu respuesta:</b> ' + letterFor(ans) + '. ' + item.o[ans] + '</div>';
     var correctLine = ok ? "" : '<div class="rline"><b>Correcta:</b> ' + letterFor(item.c) + '. ' + item.o[item.c] + '</div>';
+    var imgLine = item.img ? '<img class="q-img rev" src="' + item.img + '" alt="Gráfico de la pregunta">' : "";
     div.innerHTML =
       '<div class="rmeta"><span class="topic-pill">T' + String(item.t).padStart(2,"0") + ' · ' + TOPICS[item.t] + '</span></div>' +
       '<p class="rq">' + (i+1) + ". " + item.q + '</p>' +
+      imgLine +
       yourLine + correctLine +
       '<div class="rexpl">' + item.e + '</div>';
     review.appendChild(div);

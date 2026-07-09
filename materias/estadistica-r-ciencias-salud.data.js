@@ -4,7 +4,8 @@ window.QUIZ_DATA = {
     "title": "Quiz de repaso",
     "pageTitle": "Quiz BIOINF — Estadística y R para Ciencias de la Salud",
     "sub": "400 preguntas de interpretación (bioestadística descriptiva e inferencial, modelos multivariables, PCA, imputación de datos, evaluación de modelos…), repartidas en 10 temas. Cada partida sortea 40 preguntas al azar con las opciones barajadas.",
-    "quizLen": 40
+    "quizLen": 40,
+    "companion": { "href": "estadistica-r-practico.html", "label": "Práctico con gráficos de R (22 preguntas)" }
   },
   topics: {
   1:"Presentación e introducción al análisis de datos",

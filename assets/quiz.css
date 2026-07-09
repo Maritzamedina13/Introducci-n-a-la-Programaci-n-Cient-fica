@@ -159,6 +159,13 @@
   }
   .q-text{ font-size: 19px; line-height: 1.45; font-weight: 600; margin: 0 0 20px; text-wrap: balance; }
 
+  .q-img-wrap{ margin: 0 0 20px; }
+  .q-img{
+    display:block; max-width: 100%; height: auto; margin: 0 auto;
+    border: 1px solid var(--border); border-radius: 10px; background: #fff;
+  }
+  .q-img.rev{ margin: 10px 0; max-width: 420px; }
+
   .options{ display:flex; flex-direction: column; gap: 10px; }
   .opt{
     display:flex; align-items:flex-start; gap: 12px;
