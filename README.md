@@ -51,6 +51,15 @@ un banco teórico y otro práctico.
     interpretar (regresión logística, PCA, volcano plots, clustering/heatmaps, LASSO,
     curvas ROC/PR…). Extraído del PDF *Repaso - Practico_Estadistica.pdf*; las
     imágenes viven en `materias/img/practico/`.
+- **Secuenciación y Ómicas de Próxima Generación** (`materias/secuenciacion-omicas.html`)
+  — 30 preguntas por partida sobre un banco de 100 (10 temas): historia de la
+  secuenciación, genómica, herramientas bioinformáticas, formatos y control de
+  calidad, variantes, transcriptómica, metagenómica, proteómica, metabolómica,
+  secuenciación de tercera generación e integración de ómicas. Extraído del Word
+  *Secuenciación y Ómicas de Próxima Generación.docx*. Las 7 preguntas de tipo
+  "relaciona" (emparejamiento) del documento original se convirtieron a opción
+  múltiple: cada opción lista las 4 parejas término–definición en un orden distinto
+  (solo una es la asociación correcta).
 
 ## Cómo añadir una materia nueva
 

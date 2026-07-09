@@ -22,5 +22,13 @@ window.QUIZ_REGISTRY = [
     bank: 400,
     quizLen: 40,
     topics: 10
+  },
+  {
+    file: "materias/secuenciacion-omicas.html",
+    name: "Secuenciación y Ómicas de Próxima Generación",
+    desc: "Historia de la secuenciación, genómica, herramientas bioinformáticas, transcriptómica, metagenómica, proteómica, metabolómica y secuenciación de tercera generación.",
+    bank: 100,
+    quizLen: 30,
+    topics: 10
   }
 ];
